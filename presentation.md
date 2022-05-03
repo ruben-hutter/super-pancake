@@ -1,6 +1,6 @@
 ---
-title: Wi-Fi Direct - Tremola extension
-subtitle: IaS Project Presentation
+title: Wi-Fi Direct - Tremola Erweiterung
+subtitle: IaS Projekt Presentation
 author: Paul Schmelter, Ruben Hutter
 date: May 5, 2022
 output: beamer_presentation
@@ -8,42 +8,27 @@ theme: Dresden
 colortheme: orchid
 ---
 
-# Project Idea
-
 ## Motivation
 
-- Technology at your fingertips
-- Android development
-- Extend an opensource project
+- Technologie zum Greifen nah
+- Android Entwicklung
+- An einem Opensource Projekt mitarbeiten
 
 
-# Project Idea
+## Was ist wichtig
 
-## Importance
-
-- simple layout
-- easy to overview multiple shells
-- focus on running multiple jobs
-- intuitive to use
-- minimalistic but appealing appearance
+- Simples Layout
+- Datensicherheit (schon gegeben)
+- Gleiche Funktionalitäten wie Tremola, nur über Wi-Fi Direct
 
 ## Implementation
 
-- C Language (maybe some x86 Assembler)
-- Python 3
-- TRSh scripting xD (.trsh)
+- Android Studio
+- Kotlin
 
+## Hardware / Software Requirements
 
-# Hardware / Software Requirements
+- Editor to write code
+- Android Studio
+- Android Handy
 
-## Setup
-
-- Linux operating system
-- gcc & gdb for compilation and debugging of C code
-- editor to write code
-- easy as required tools are part of most Linux distros by default
-
-
-# Time Plan
-
-![Time Plan](ablauf.png)
