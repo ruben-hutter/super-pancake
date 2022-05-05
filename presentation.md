@@ -27,6 +27,7 @@ colortheme: orchid
 
 # Hardware / Software Requirements
 
+- Code Editor
 - Android Studio
 - Android Handy
 
