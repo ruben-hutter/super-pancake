@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -21,7 +22,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     // GUI related variables
     private lateinit var textView: TextView
     private lateinit var typeMessage: EditText
-    private lateinit var sendMessage: Button
+    private lateinit var sendButton: Button
+    private lateinit var scanButton: Button
+    private lateinit var fragList: ListView
 
     // event filter
     private val intentFilter = IntentFilter()
@@ -52,10 +55,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         // link to GUI
         textView = findViewById(R.id.textView)
         typeMessage = findViewById(R.id.typeMessage)
-        sendMessage = findViewById(R.id.sendMessage)
+        sendButton = findViewById(R.id.sendButton)
+        scanButton = findViewById(R.id.scanButton)
+        fragList = findViewById(R.id.frag_list)
 
         // set Button
-        sendMessage.setOnClickListener(this)
+        sendButton.setOnClickListener(this)
+        scanButton.setOnClickListener(this)
     }
 
     /**
@@ -83,17 +89,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.sendMessage -> {
+            R.id.sendButton -> {
                 textView.text = typeMessage.text
                 Log.i(TAG, "textView: ${textView.text}")
                 sendWithWiFiDirect()
                 typeMessage.text = null
             }
+            R.id.scanButton -> {
+                // TODO discover new devices
+            }
         }
-    }
-
-    private fun sendWithWiFiDirect() {
-        // TODO
     }
 
     /** register the BroadcastReceiver with the intent values to be matched  */
@@ -106,5 +111,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     public override fun onPause() {
         super.onPause()
         unregisterReceiver(receiver)
+    }
+
+    private fun sendWithWiFiDirect() {
+        // TODO
     }
 }
