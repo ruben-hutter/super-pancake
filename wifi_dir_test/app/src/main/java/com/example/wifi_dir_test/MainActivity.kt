@@ -1,6 +1,9 @@
 package com.example.wifi_dir_test
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.IntentFilter
+import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    var isWifiP2pEnabled: Boolean = false
+
     // GUI related variables
     private lateinit var textView: TextView
     private lateinit var typeMessage: EditText
@@ -19,6 +25,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // event filter
     private val intentFilter = IntentFilter()
+
+    // broadcast receiver
+    private lateinit var receiver: BroadcastReceiver
 
     // WifiP2PManager
     private lateinit var manager: WifiP2pManager
@@ -85,5 +94,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun sendWithWiFiDirect() {
         // TODO
+    }
+
+    /** register the BroadcastReceiver with the intent values to be matched  */
+    public override fun onResume() {
+        super.onResume()
+        receiver = WiFiDirectBroadcastReceiver(manager, channel, this)
+        registerReceiver(receiver, intentFilter)
+    }
+
+    public override fun onPause() {
+        super.onPause()
+        unregisterReceiver(receiver)
     }
 }
