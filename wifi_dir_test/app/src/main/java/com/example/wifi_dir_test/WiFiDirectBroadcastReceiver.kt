@@ -6,13 +6,9 @@ import android.content.Intent
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 
-class WiFiDirectBroadcastReceiver(manager: WifiP2pManager,
-                                  channel: WifiP2pManager.Channel,
-                                  activity: MainActivity) : BroadcastReceiver() {
-
-    private val manager: WifiP2pManager = manager
-    private val channel: WifiP2pManager.Channel = channel
-    private val activity: MainActivity = activity
+class WiFiDirectBroadcastReceiver(val manager: WifiP2pManager,
+                                  val channel: WifiP2pManager.Channel,
+                                  private val activity: MainActivity) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when(intent.action) {
@@ -39,8 +35,8 @@ class WiFiDirectBroadcastReceiver(manager: WifiP2pManager,
                     .apply {
                         updateThisDevice(
                             intent.getParcelableExtra(
-                                WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)!! as WifiP2pDevice
-                        )
+                                WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)!!
+                        ) as WifiP2pDevice
                     }
             }
         }
