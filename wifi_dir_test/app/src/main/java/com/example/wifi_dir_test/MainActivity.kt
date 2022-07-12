@@ -1,8 +1,11 @@
 package com.example.wifi_dir_test
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +15,11 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
 
     var isWifiP2pEnabled: Boolean = false
 
@@ -35,6 +39,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     // WifiP2PManager
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
+
+    // peers
+    private val peers = mutableListOf<WifiP2pDevice>()
+    private lateinit var devicesNames: Array<String>
+    private lateinit var devices: Array<WifiP2pDevice>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +69,45 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         scanButton = findViewById(R.id.scanButton)
         fragList = findViewById(R.id.frag_list)
 
-        // set Button
-        sendButton.setOnClickListener(this)
-        scanButton.setOnClickListener(this)
+        // set Buttons
+        sendButton.setOnClickListener {
+            textView.text = typeMessage.text
+            Log.i(TAG, "textView: ${textView.text}")
+            sendWithWiFiDirect()
+            typeMessage.text = null
+        }
+        scanButton.setOnClickListener {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return@setOnClickListener
+            }
+            manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
+
+                override fun onSuccess() {
+                    // Code for when the discovery initiation is successful goes here.
+                    // No services have actually been discovered yet, so this method
+                    // can often be left blank. Code for peer discovery goes in the
+                    // onReceive method, detailed below.
+                    Log.i(TAG, "Discovery started")
+                }
+
+                override fun onFailure(reasonCode: Int) {
+                    // Code for when the discovery initiation fails goes here.
+                    // Alert the user that something went wrong.
+                    Log.i(TAG, "Discovery failed")
+                }
+            })
+        }
     }
 
     /**
@@ -87,17 +133,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         channel = manager.initialize(this, mainLooper, null)
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.sendButton -> {
-                textView.text = typeMessage.text
-                Log.i(TAG, "textView: ${textView.text}")
-                sendWithWiFiDirect()
-                typeMessage.text = null
-            }
-            R.id.scanButton -> {
-                // TODO discover new devices
-            }
+    /**
+     * Fetches and processes the list of peers.
+     * - determine when peers join or leave the network
+     */
+    private val peerListListener = WifiP2pManager.PeerListListener { peerList ->
+        val refreshedPeers = peerList.deviceList
+        if (refreshedPeers != peers) {
+            peers.clear()
+            peers.addAll(refreshedPeers)
+
+            // If an AdapterView is backed by this data, notify it
+            // of the change. For instance, if you have a ListView of
+            // available peers, trigger an update.
+            (listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
+
+            // Perform any other updates needed based on the new list of
+            // peers connected to the Wi-Fi P2P network.
+        }
+
+        if (peers.isEmpty()) {
+            Log.d(TAG, "No devices found")
+            return@PeerListListener
         }
     }
 
@@ -114,6 +171,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun sendWithWiFiDirect() {
-        // TODO
+        // TODO this method will send the typed message to the selected peer or peer group
     }
 }
