@@ -40,11 +40,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
 
-    // peers
-    private val peers = mutableListOf<WifiP2pDevice>()
-    private lateinit var devicesNames: Array<String>
-    private lateinit var devices: Array<WifiP2pDevice>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,31 +126,6 @@ class MainActivity : AppCompatActivity() {
     private fun initWifiP2PManager() {
         manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         channel = manager.initialize(this, mainLooper, null)
-    }
-
-    /**
-     * Fetches and processes the list of peers.
-     * - determine when peers join or leave the network
-     */
-    private val peerListListener = WifiP2pManager.PeerListListener { peerList ->
-        val refreshedPeers = peerList.deviceList
-        if (refreshedPeers != peers) {
-            peers.clear()
-            peers.addAll(refreshedPeers)
-
-            // If an AdapterView is backed by this data, notify it
-            // of the change. For instance, if you have a ListView of
-            // available peers, trigger an update.
-            (listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
-
-            // Perform any other updates needed based on the new list of
-            // peers connected to the Wi-Fi P2P network.
-        }
-
-        if (peers.isEmpty()) {
-            Log.d(TAG, "No devices found")
-            return@PeerListListener
-        }
     }
 
     /** register the BroadcastReceiver with the intent values to be matched  */

@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pDeviceList
-import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pManager.*
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +16,7 @@ import android.widget.TextView
 import androidx.fragment.app.ListFragment
 
 
-class DeviceListFragment : ListFragment(), WifiP2pManager.PeerListListener {
+class DeviceListFragment : ListFragment(), PeerListListener {
     companion object {
         private const val TAG = "DeviceListFragment"
     }
@@ -27,6 +26,7 @@ class DeviceListFragment : ListFragment(), WifiP2pManager.PeerListListener {
     var device: WifiP2pDevice? = null
         private set
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         this.listAdapter = WiFiPeerListAdapter(requireActivity(), R.layout.row_devices, peerList)
@@ -51,6 +51,7 @@ class DeviceListFragment : ListFragment(), WifiP2pManager.PeerListListener {
             else -> "Unknown"
         }
     }
+
     // initiate connection with the peer, apparently
     override fun onListItemClick(l: ListView, v: View, position: Int, id: Long) {
         val device = listAdapter!!.getItem(position) as WifiP2pDevice
@@ -61,7 +62,7 @@ class DeviceListFragment : ListFragment(), WifiP2pManager.PeerListListener {
         peerList.clear()
         peerList.addAll(peers.deviceList)
         for (s in peers.deviceList) {
-            Log.d(TAG, "onpeersavaliable, $s")
+            Log.d(TAG, "onPeersAvailable, $s")
         }
         (listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
         if (peerList.size == 0) {
@@ -91,18 +92,12 @@ class DeviceListFragment : ListFragment(), WifiP2pManager.PeerListListener {
                 v = vi.inflate(R.layout.row_devices, null)
             }
             val device = items[position]
-            if (device != null) {
-                val top = v!!.findViewById<View>(R.id.device_name) as TextView
-                val bottom = v.findViewById<View>(R.id.device_details) as TextView
-                if (top != null) {
-                    top.text = device.deviceName
-                }
-                if (bottom != null) {
-                    bottom.text = getDeviceStatus(device.status)
-                    Log.d(TAG, "WiFiPeerListAdapter getView")
-                }
-            }
-            return v!!
+            val top = v!!.findViewById<View>(R.id.device_name) as TextView
+            val bottom = v.findViewById<View>(R.id.device_details) as TextView
+            top.text = device.deviceName
+            bottom.text = getDeviceStatus(device.status)
+            Log.d(TAG, "WiFiPeerListAdapter getView")
+            return v
         }
     }
 
