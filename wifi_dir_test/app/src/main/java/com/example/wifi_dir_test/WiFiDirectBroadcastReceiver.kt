@@ -57,11 +57,6 @@ class WiFiDirectBroadcastReceiver(
                 activity.isWifiP2pEnabled = state == WifiP2pManager.WIFI_P2P_STATE_ENABLED
             }
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
-
-                // The peer list has changed! We should probably do something about
-                // that.
-
-
                 // Request available peers from the wifi p2p manager. This is an
                 // asynchronous call and the calling activity is notified with a
                 // callback on PeerListListener.onPeersAvailable()
@@ -77,6 +72,7 @@ class WiFiDirectBroadcastReceiver(
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
+                    Log.d(TAG, "Failed to refresh")
                     return
                 }
                 manager.requestPeers(channel, peerListListener)

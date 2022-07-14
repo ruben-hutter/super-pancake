@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         // set Buttons
         sendButton.setOnClickListener {
             textView.text = typeMessage.text
-            Log.i(TAG, "textView: ${textView.text}")
+            Log.d(TAG, "textView: ${textView.text}")
             sendWithWiFiDirect()
             typeMessage.text = null
         }
@@ -81,6 +81,11 @@ class MainActivity : AppCompatActivity() {
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    PackageManager.PERMISSION_GRANTED
+                )
                 return@setOnClickListener
             }
             manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
@@ -96,9 +101,10 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(reasonCode: Int) {
                     // Code for when the discovery initiation fails goes here.
                     // Alert the user that something went wrong.
-                    Log.i(TAG, "Discovery failed")
+                    Log.i(TAG, "Discovery failed: $reasonCode")
                 }
             })
+            Log.d(TAG, "pressed button SCAN")
         }
     }
 
