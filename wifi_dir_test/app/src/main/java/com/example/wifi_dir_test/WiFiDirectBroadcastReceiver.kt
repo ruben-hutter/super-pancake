@@ -5,18 +5,21 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pConfig
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
 
 class WiFiDirectBroadcastReceiver(
     private val manager: WifiP2pManager,
     private val channel: WifiP2pManager.Channel,
-    private val activity: MainActivity) : BroadcastReceiver() {
+    private val activity: MainActivity
+) : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "WiFiDirBrdcstRcvr"
@@ -36,11 +39,12 @@ class WiFiDirectBroadcastReceiver(
             // of the change. For instance, if you have a ListView of
             // available peers, trigger an update.
             peersNames = arrayOfNulls<String?>(refreshedPeers.size)
-            var i = 0;
+            var i = 0
             for (peer in refreshedPeers) {
                 peersNames[i++] = peer.deviceName
             }
-            val listAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, peersNames)
+            val listAdapter =
+                ArrayAdapter(activity, android.R.layout.simple_list_item_1, peersNames)
             activity.setListAdapter(listAdapter)
             //(listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
             listAdapter.notifyDataSetChanged()
@@ -56,7 +60,7 @@ class WiFiDirectBroadcastReceiver(
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        when(intent.action) {
+        when (intent.action) {
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
                 // Determine if Wifi P2P mode is enabled or not, alert
                 // the Activity.
@@ -72,13 +76,11 @@ class WiFiDirectBroadcastReceiver(
                         Manifest.permission.ACCESS_FINE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                    ActivityCompat.requestPermissions(
+                        activity,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        PackageManager.PERMISSION_GRANTED
+                    )
                     Log.d(TAG, "Failed to refresh")
                     return
                 }
@@ -108,7 +110,7 @@ class WiFiDirectBroadcastReceiver(
         myDevice = device
     }
 
-    override fun connect(position: Int) {
+    fun connect(position: Int) {
         val device = peers[position]
 
         val config = WifiP2pConfig().apply {
@@ -116,6 +118,18 @@ class WiFiDirectBroadcastReceiver(
             wps.setup = WpsInfo.PBC
         }
 
+        if (ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PackageManager.PERMISSION_GRANTED
+            )
+            return
+        }
         manager.connect(channel, config, object : WifiP2pManager.ActionListener {
 
             override fun onSuccess() {
