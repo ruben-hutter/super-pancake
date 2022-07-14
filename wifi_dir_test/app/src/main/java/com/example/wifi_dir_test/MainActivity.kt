@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity() {
                     Log.i(TAG, "Discovery failed")
                 }
             })
-            setContentView(R.layout.device_list)
         }
     }
 

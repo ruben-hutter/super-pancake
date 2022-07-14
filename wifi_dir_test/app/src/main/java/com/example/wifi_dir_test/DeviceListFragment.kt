@@ -17,6 +17,7 @@ import androidx.fragment.app.ListFragment
 
 
 class DeviceListFragment : ListFragment(), PeerListListener {
+
     companion object {
         private const val TAG = "DeviceListFragment"
     }

@@ -10,6 +10,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 
+
 class WiFiDirectBroadcastReceiver(
     private val manager: WifiP2pManager,
     private val channel: WifiP2pManager.Channel,
@@ -62,13 +63,14 @@ class WiFiDirectBroadcastReceiver(
 
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
-                (activity.supportFragmentManager.findFragmentById(R.id.frag_list) as DeviceListFragment)
+                (activity.supportFragmentManager.findFragmentById(R.id.frag_list)
                     .apply {
-                        updateThisDevice(
-                            intent.getParcelableExtra(
-                                WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)!!
+                        peerListListener.updateThisDevice(
+                            intent.getParcelableExtra<WifiP2pDevice>(
+                                WifiP2pManager.EXTRA_WIFI_P2P_DEVICE
+                            ) as WifiP2pDevice
                         )
-                    }
+                    })
             }
         }
     }
