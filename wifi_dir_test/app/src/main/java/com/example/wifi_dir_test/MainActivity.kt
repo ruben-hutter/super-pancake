@@ -10,10 +10,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
@@ -77,7 +74,6 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                setContentView(R.layout.device_list)
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -139,6 +135,13 @@ class MainActivity : AppCompatActivity() {
     public override fun onPause() {
         super.onPause()
         unregisterReceiver(receiver)
+    }
+
+    /**
+     * Set the updated list of peers to the ListView
+     */
+    fun setListAdapter(adapterUpdate: ListAdapter) {
+        fragList.adapter = adapterUpdate
     }
 
     private fun sendWithWiFiDirect() {

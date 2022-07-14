@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.util.Log
+import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
 
 
@@ -20,7 +21,32 @@ class WiFiDirectBroadcastReceiver(
         private const val TAG = "WiFiDirBrdcstRcvr"
     }
 
-    private val peerListListener = DeviceListFragment()
+    private val peers = mutableListOf<WifiP2pDevice>()
+    private lateinit var myDevice: WifiP2pDevice
+
+    private val peerListListener = WifiP2pManager.PeerListListener { peerList ->
+        val refreshedPeers = peerList.deviceList
+        if (refreshedPeers != peers) {
+            peers.clear()
+            peers.addAll(refreshedPeers)
+
+            // If an AdapterView is backed by this data, notify it
+            // of the change. For instance, if you have a ListView of
+            // available peers, trigger an update.
+            val listAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, peers)
+            activity.setListAdapter(listAdapter)
+            //(listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
+            listAdapter.notifyDataSetChanged()
+
+            // Perform any other updates needed based on the new list of
+            // peers connected to the Wi-Fi P2P network.
+        }
+
+        if (peers.isEmpty()) {
+            Log.d(TAG, "No devices found")
+            return@PeerListListener
+        }
+    }
 
     override fun onReceive(context: Context, intent: Intent) {
         when(intent.action) {
@@ -65,7 +91,7 @@ class WiFiDirectBroadcastReceiver(
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
                 (activity.supportFragmentManager.findFragmentById(R.id.frag_list)
                     .apply {
-                        peerListListener.updateThisDevice(
+                        updateThisDevice(
                             intent.getParcelableExtra<WifiP2pDevice>(
                                 WifiP2pManager.EXTRA_WIFI_P2P_DEVICE
                             ) as WifiP2pDevice
@@ -73,5 +99,9 @@ class WiFiDirectBroadcastReceiver(
                     })
             }
         }
+    }
+
+    private fun updateThisDevice(device: WifiP2pDevice) {
+        myDevice = device
     }
 }
