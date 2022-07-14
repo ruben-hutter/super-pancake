@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
+import android.net.wifi.p2p.WifiP2pConfig
 import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
@@ -22,6 +23,7 @@ class WiFiDirectBroadcastReceiver(
     }
 
     private val peers = mutableListOf<WifiP2pDevice>()
+    private var peersNames = emptyArray<String?>()
     private lateinit var myDevice: WifiP2pDevice
 
     private val peerListListener = WifiP2pManager.PeerListListener { peerList ->
@@ -33,7 +35,12 @@ class WiFiDirectBroadcastReceiver(
             // If an AdapterView is backed by this data, notify it
             // of the change. For instance, if you have a ListView of
             // available peers, trigger an update.
-            val listAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, peers)
+            peersNames = arrayOfNulls<String?>(refreshedPeers.size)
+            var i = 0;
+            for (peer in refreshedPeers) {
+                peersNames[i++] = peer.deviceName
+            }
+            val listAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, peersNames)
             activity.setListAdapter(listAdapter)
             //(listAdapter as WiFiPeerListAdapter).notifyDataSetChanged()
             listAdapter.notifyDataSetChanged()
@@ -99,5 +106,29 @@ class WiFiDirectBroadcastReceiver(
 
     private fun updateThisDevice(device: WifiP2pDevice) {
         myDevice = device
+    }
+
+    override fun connect(position: Int) {
+        val device = peers[position]
+
+        val config = WifiP2pConfig().apply {
+            deviceAddress = device.deviceAddress
+            wps.setup = WpsInfo.PBC
+        }
+
+        manager.connect(channel, config, object : WifiP2pManager.ActionListener {
+
+            override fun onSuccess() {
+                // WiFiDirectBroadcastReceiver notifies us. Ignore for now.
+            }
+
+            override fun onFailure(reason: Int) {
+                Toast.makeText(
+                    activity,
+                    "Connect failed. Retry.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
     }
 }

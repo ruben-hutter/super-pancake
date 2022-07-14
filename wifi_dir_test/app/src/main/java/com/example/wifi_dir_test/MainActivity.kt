@@ -13,6 +13,8 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import android.widget.AdapterView
+
 
 private const val TAG = "MainActivity"
 
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val intentFilter = IntentFilter()
 
     // broadcast receiver
-    private lateinit var receiver: BroadcastReceiver
+    private lateinit var receiver: WiFiDirectBroadcastReceiver
 
     // WifiP2PManager
     private lateinit var manager: WifiP2pManager
@@ -104,8 +106,15 @@ class MainActivity : AppCompatActivity() {
                     Log.i(TAG, "Discovery failed: $reasonCode")
                 }
             })
-            Log.d(TAG, "pressed button SCAN")
         }
+
+        // set list click behaviour
+        fragList.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+
+            override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                receiver.connect(position)
+            }
+        })
     }
 
     /**
