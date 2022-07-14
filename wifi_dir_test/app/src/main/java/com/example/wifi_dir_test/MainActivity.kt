@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.widget.AdapterView
+import java.net.Socket
 
 
 private const val TAG = "MainActivity"
@@ -38,6 +39,9 @@ class MainActivity : AppCompatActivity() {
     // WifiP2PManager
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
+
+    // socket
+    private lateinit var socket: Socket
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
