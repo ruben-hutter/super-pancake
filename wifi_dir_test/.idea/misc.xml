@@ -3,20 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../../../../../layout/custom_preview.xml" value="0.3233695652173913" />
-        <entry key="../../../../../../layout/custom_preview.xml" value="0.3188405797101449" />
-        <entry key="../../../../Dropbox/UNI_Basel/FS2022/Introduction to Internet and Security/Projekt/wifi_dir_test/app/src/main/res/layout/activity_main.xml" value="0.3619791666666667" />
-        <entry key="../../../../Dropbox/UNI_Basel/FS2022/Introduction to Internet and Security/Projekt/wifi_dir_test/app/src/main/res/layout/device_list.xml" value="0.3619791666666667" />
-        <entry key="../../../../Dropbox/UNI_Basel/FS2022/Introduction to Internet and Security/Projekt/wifi_dir_test/app/src/main/res/layout/row_devices.xml" value="0.3619791666666667" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/device_list.xml" value="0.17249240121580547" />
+        <entry key="..\:/Users/hutte/Dropbox/UNI_Basel/FS2022/Introduction to Internet and Security/Projekt/wifi_dir_test/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/build/classes" />
-  </component>
-  <component name="ProjectType">
-    <option name="id" value="Android" />
-  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>
