@@ -1,20 +1,21 @@
 package com.example.wifi_dir_test
 
 import android.Manifest
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.widget.AdapterView
+import java.net.InetAddress
 import java.net.Socket
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.properties.Delegates
 
 
 private const val TAG = "MainActivity"
@@ -40,8 +41,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
 
-    // socket
+    // socket connection
     private lateinit var socket: Socket
+    private lateinit var server: Server
+    private lateinit var client: Client
+    private var isHost = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,10 +73,15 @@ class MainActivity : AppCompatActivity() {
 
         // set Buttons
         sendButton.setOnClickListener {
-            textView.text = typeMessage.text
-            Log.d(TAG, "textView: ${textView.text}")
-            sendWithWiFiDirect()
-            typeMessage.text = null
+            val executor: ExecutorService = Executors.newSingleThreadExecutor()
+            val message = typeMessage.text.toString()
+            executor.execute {
+                if (isHost) {
+                    server.write(message.toByteArray())
+                } else {
+                    client.write(message.toByteArray())
+                }
+            }
         }
         scanButton.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(
@@ -152,7 +161,21 @@ class MainActivity : AppCompatActivity() {
         fragList.adapter = adapterUpdate
     }
 
-    private fun sendWithWiFiDirect() {
-        // TODO this method will send the typed message to the selected peer or peer group
+    fun setMessage(message: String) {
+        textView.text = message
+    }
+
+    fun setHost(value: Boolean) {
+        isHost = value
+    }
+
+    fun startServer() {
+        server = Server(socket, this)
+        server.start()
+    }
+
+    fun startClient(groupOwnerAddress: String?) {
+        client = Client(groupOwnerAddress, socket, this)
+        client.start()
     }
 }

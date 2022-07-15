@@ -71,11 +71,15 @@ class WiFiDirectBroadcastReceiver(
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a group owner thread and accepting
             // incoming connections.
+            activity.setHost(true)
+            activity.startServer()
             Toast.makeText(activity, "Server", Toast.LENGTH_SHORT).show()
         } else if (info.groupFormed) {
             // The other device acts as the peer (client). In this case,
             // you'll want to create a peer thread that connects
             // to the group owner.
+            activity.setHost(false)
+            activity.startClient(groupOwnerAddress)
             Toast.makeText(activity, "Client", Toast.LENGTH_SHORT).show()
         }
     }
